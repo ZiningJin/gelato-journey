@@ -91,12 +91,6 @@ const AnimatedPlane = dynamic(
   { ssr: false }
 )
 
-// let L: any
-// if (typeof window !== 'undefined') {
-//   L = require('leaflet')
-//   require('leaflet/dist/leaflet.css')
-// }
-
 export default function TravelMap() {
   const [selectedCity, setSelectedCity] = useState<City | null>(null)
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
@@ -110,20 +104,33 @@ export default function TravelMap() {
   //   });
   // }, []);
 
+  const DefaultIcon = L.icon({
+    iconUrl: '/images/marker-icon-blue.png',
+    iconRetinaUrl: '/images/marker-icon-2x-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+  });
+
   useEffect(() => {
-    const DefaultIcon = L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
+    // const DefaultIcon = L.icon({
+    //   // iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    //   // iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    //   iconUrl: '/images/marker-icon-blue.png',
+    //   iconRetinaUrl: '/images/marker-icon-2x-blue.png',
+    //   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    //   iconSize: [25, 41],
+    //   iconAnchor: [12, 41],
+    //   popupAnchor: [1, -34],
+    //   tooltipAnchor: [16, -28],
+    //   shadowSize: [41, 41]
+    // });
   
     L.Marker.prototype.options.icon = DefaultIcon;
-  }, []);
+  }, []); 
 
   const visitedCities = useMemo(() => {
     return cities.filter(city => city.visited).sort((a, b) => new Date(a.date || '').getTime() - new Date(b.date || '').getTime())
@@ -131,18 +138,11 @@ export default function TravelMap() {
 
   const flightPath = visitedCities.map(city => city.coordinates)
 
-  // const customIcon = new L.Icon({
-  //   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  //   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png',
-  //   iconSize: [25, 41],
-  //   iconAnchor: [12, 41],
-  //   popupAnchor: [1, -34],
-  //   shadowSize: [41, 41]
-  // })
 
   const customIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    // iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconUrl: '/images/marker-icon-2x-red.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -152,7 +152,7 @@ export default function TravelMap() {
   return (
     <div className="flex flex-col min-h-screen bg-[#FFF9F0]">
       <header className="bg-[#FF90B3] text-white py-6">
-        <h1 className="text-3xl font-bold text-center font-serif">My Amorino Gelato Journey</h1>
+        <h1 className="text-3xl font-bold text-center font-serif">Charlie ~ Amorino Gelato Journey</h1>
       </header>
       <main className="flex-grow p-8">
         <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-6 relative">
@@ -171,7 +171,7 @@ export default function TravelMap() {
                 <Marker 
                   key={index} 
                   position={city.coordinates} 
-                  icon={city.visited ? customIcon : new L.Icon.Default()}
+                  icon={city.visited ? customIcon : DefaultIcon} // new L.Icon.Default()
                   eventHandlers={{
                     click: () => {
                       if (city.visited) {
